@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main] # Vérifie que ta branche s'appelle bien main
+    branches: [main]
 
 permissions:
   contents: read
@@ -29,7 +29,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: './dist' # Dossier standard de sortie de Vite
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
