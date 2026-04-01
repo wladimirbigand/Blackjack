@@ -587,13 +587,13 @@ export default function App() {
   const canDouble = activeHandObj && activeHandObj.cards.length === 2;
 
   // Coordonnées absolues pour s'aligner PARFAITEMENT sur l'arc de la table (Plateau 1200x800)
-  // AJUSTÉES : Plus écartées horizontalement et descendues verticalement SOUS la ligne
+  // AJUSTÉES : Plus écartées horizontalement et descendues verticalement SOUS l'ancienne ligne
   const spotPositions = [
-    { left: '160px', top: '630px', rotate: '-24deg' },
-    { left: '370px', top: '570px', rotate: '-12deg' },
-    { left: '600px', top: '550px', rotate: '0deg' },
-    { left: '830px', top: '570px', rotate: '12deg' },
-    { left: '1040px', top: '630px', rotate: '24deg' }
+    { left: '160px', top: '660px', rotate: '-24deg' },
+    { left: '370px', top: '600px', rotate: '-12deg' },
+    { left: '600px', top: '580px', rotate: '0deg' },
+    { left: '830px', top: '600px', rotate: '12deg' },
+    { left: '1040px', top: '660px', rotate: '24deg' }
   ];
 
   return (
@@ -654,15 +654,12 @@ export default function App() {
             <div className="w-[90%] h-3 bg-[#111] mt-1 rounded-sm border-t border-gray-700"></div>
           </div>
 
-          {/* TABLE INCURVEE ET MARQUAGES */}
-          {/* AJUSTÉE : Descendue (top-420px) et élargie (w-1500px) */}
+          {/* TABLE INCURVEE */}
+          {/* Ligne de démarcation retirée de cet endroit */}
           <div className="absolute top-[420px] left-1/2 -translate-x-1/2 w-[1500px] h-[900px] rounded-[50%] border-[36px] border-[#1a1a1a] shadow-[inset_0_30px_80px_rgba(0,0,0,0.8),0_0_80px_rgba(0,0,0,0.5)] pointer-events-none bg-transparent ring-8 ring-black/40">
-            {/* Ligne de démarcation des paris */}
-            <div className="absolute top-[64px] left-1/2 -translate-x-1/2 w-[92%] h-[92%] rounded-[50%] border-t-[3px] border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)] pointer-events-none"></div>
           </div>
 
           {/* ZONE DU CROUPIER */}
-          {/* AJUSTÉE : Remontée légèrement (top-90px) */}
           <div className="absolute top-[90px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
             <div className="px-5 py-1 mb-4 bg-black/60 rounded-full border border-white/20 text-xs tracking-widest uppercase font-semibold text-white/80 shadow-lg">
               Croupier
