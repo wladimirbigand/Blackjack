@@ -104,7 +104,7 @@ const BoardChip = ({ chipObj }) => (
 
 // Puce avec tailles adaptatives uniquement pour le HUD (barre du bas)
 const HUDChip = ({ chipObj, className = "" }) => (
-  <div className={`w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full border-[2px] md:border-[3px] lg:border-[4px] shadow-[0_4px_6px_rgba(0,0,0,0.6)] flex items-center justify-center font-bold text-[10px] md:text-sm select-none ${chipObj.bg} ${chipObj.border} ${chipObj.text} ${className}`}>
+  <div className={`w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full border-[2px] md:border-[3px] lg:border-[4px] shadow-[0_4px_6px_rgba(0,0,0,0.6)] flex items-center justify-center font-bold text-[10px] md:text-sm select-none ${chipObj.bg} ${chipObj.border} ${chipObj.text} ${className}`}>
     <div className={`w-[80%] h-[80%] rounded-full border-[1px] md:border-2 border-dashed flex items-center justify-center ${chipObj.inner}`}>
       {chipObj.value}
     </div>
@@ -151,12 +151,22 @@ export default function App() {
   const [message, setMessage] = useState(savedSession?.gameState && savedSession.gameState !== 'betting' ? "Partie en cours restaurée." : "Faites vos jeux. (5 emplacements)");
   const [handHistory, setHandHistory] = useState(savedSession?.handHistory || []);
   
+  // -- ÉTAT DU MENU DÉROULANT DES JETONS --
+  const [isChipMenuOpen, setIsChipMenuOpen] = useState(false);
+
   // -- SYSTÈME DE SCALING (Zomm Automatique) --
   const [boardScale, setBoardScale] = useState(1);
   const boardWrapperRef = useRef(null);
   
   const handleHitRef = useRef();
   const handleStandRef = useRef();
+
+  // Fermer le menu déroulant si l'état de jeu change (ex: quand les cartes sont distribuées)
+  useEffect(() => {
+    if (gameState !== 'betting') {
+      setIsChipMenuOpen(false);
+    }
+  }, [gameState]);
 
   useEffect(() => {
     const updateScale = () => {
@@ -225,6 +235,9 @@ export default function App() {
       }
       return spot;
     }));
+    
+    // Auto-ferme le menu de jetons lors d'un pari si ouvert
+    if (isChipMenuOpen) setIsChipMenuOpen(false);
   };
 
   const clearBets = () => {
@@ -269,6 +282,7 @@ export default function App() {
     if (gameState === 'betting') {
       playSound('chip');
       setSelectedChipValue(value);
+      setIsChipMenuOpen(false); // Ferme le menu après sélection
     }
   };
 
@@ -572,12 +586,13 @@ export default function App() {
   const canDouble = activeHandObj && activeHandObj.cards.length === 2;
 
   // Coordonnées absolues pour s'aligner PARFAITEMENT sur l'arc de la table (Plateau 1200x800)
+  // AJUSTÉES : Plus écartées horizontalement et descendues verticalement
   const spotPositions = [
-    { left: '180px', top: '560px', rotate: '-20deg' },
-    { left: '390px', top: '480px', rotate: '-10deg' },
-    { left: '600px', top: '450px', rotate: '0deg' },
-    { left: '810px', top: '480px', rotate: '10deg' },
-    { left: '1020px', top: '560px', rotate: '20deg' }
+    { left: '140px', top: '580px', rotate: '-24deg' },
+    { left: '360px', top: '520px', rotate: '-12deg' },
+    { left: '600px', top: '500px', rotate: '0deg' },
+    { left: '840px', top: '520px', rotate: '12deg' },
+    { left: '1060px', top: '580px', rotate: '24deg' }
   ];
 
   return (
@@ -587,7 +602,7 @@ export default function App() {
       <div className="absolute inset-0 opacity-[0.06] bg-[url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E')] mix-blend-overlay pointer-events-none z-0"></div>
 
       {/* --- PLATEAU DE JEU PRINCIPAL (ZOMM AUTOMATIQUE) --- */}
-      <div ref={boardWrapperRef} className="flex-1 relative flex items-center justify-center overflow-hidden z-10">
+      <div ref={boardWrapperRef} className="flex-1 relative flex items-center justify-center overflow-hidden z-10" onClick={() => isChipMenuOpen && setIsChipMenuOpen(false)}>
         
         {/* Le conteneur virtuel de 1200x800 */}
         <motion.div 
@@ -639,13 +654,15 @@ export default function App() {
           </div>
 
           {/* TABLE INCURVEE ET MARQUAGES */}
-          <div className="absolute top-[350px] left-1/2 -translate-x-1/2 w-[1400px] h-[800px] rounded-[50%] border-[36px] border-[#1a1a1a] shadow-[inset_0_30px_80px_rgba(0,0,0,0.8),0_0_80px_rgba(0,0,0,0.5)] pointer-events-none bg-transparent ring-8 ring-black/40">
+          {/* AJUSTÉE : Descendue (top-420px) et élargie (w-1500px) */}
+          <div className="absolute top-[420px] left-1/2 -translate-x-1/2 w-[1500px] h-[900px] rounded-[50%] border-[36px] border-[#1a1a1a] shadow-[inset_0_30px_80px_rgba(0,0,0,0.8),0_0_80px_rgba(0,0,0,0.5)] pointer-events-none bg-transparent ring-8 ring-black/40">
             {/* Ligne de démarcation des paris */}
             <div className="absolute top-[64px] left-1/2 -translate-x-1/2 w-[92%] h-[92%] rounded-[50%] border-t-[3px] border-yellow-500/50 shadow-[0_0_15px_rgba(234,179,8,0.3)] pointer-events-none"></div>
           </div>
 
           {/* ZONE DU CROUPIER */}
-          <div className="absolute top-[120px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
+          {/* AJUSTÉE : Remontée légèrement (top-90px) */}
+          <div className="absolute top-[90px] left-1/2 -translate-x-1/2 z-20 flex flex-col items-center">
             <div className="px-5 py-1 mb-4 bg-black/60 rounded-full border border-white/20 text-xs tracking-widest uppercase font-semibold text-white/80 shadow-lg">
               Croupier
               {gameState === 'gameOver' && <span className="ml-3 text-yellow-400 font-bold">{calculateHandValue(dealerHand.cards).value}</span>}
@@ -810,25 +827,54 @@ export default function App() {
         </motion.div>
       </div>
 
-      {/* --- HUD : BARRE DE CONTRÔLE ANCRÉE EN BAS (Responsive Standard) --- */}
+      {/* --- HUD : BARRE DE CONTRÔLE ANCRÉE EN BAS --- */}
       <div className="w-full flex-shrink-0 px-2 py-3 md:px-6 md:py-6 bg-gradient-to-b from-[#1a110c] to-[#0a0604] border-t-[4px] md:border-t-[10px] border-[#000000] z-40 flex flex-col md:flex-row justify-between items-center gap-4 shadow-[0_-10px_30px_rgba(0,0,0,0.9)] relative">
         
-        {/* SÉLECTEUR DE JETONS (Gauche) */}
-        <div className={`flex items-center gap-2 md:gap-4 bg-black/60 p-2 md:p-4 rounded-[12px] md:rounded-2xl shadow-[inset_0_2px_10px_rgba(0,0,0,0.9)] border border-white/5 order-2 md:order-1 ${gameState !== 'betting' ? 'hidden md:flex' : 'flex'}`}>
-          <button className="text-white/20 hover:text-white/60 p-1 hidden sm:block"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6"/></svg></button>
+        {/* SÉLECTEUR DE JETONS COMPACT (Menu déroulant vers le haut) */}
+        <div className={`relative order-2 md:order-1 flex justify-center z-50 ${gameState !== 'betting' ? 'opacity-50 grayscale pointer-events-none' : ''}`}>
           
-          {CHIPS.map(chip => (
-            <motion.div 
-              key={chip.value} 
-              whileHover={gameState === 'betting' ? { scale: 1.1, y: -3 } : {}}
-              onClick={() => selectChip(chip.value)}
-              className={`cursor-pointer transition-all ${selectedChipValue === chip.value ? 'scale-110 -translate-y-2 drop-shadow-[0_8px_10px_rgba(0,0,0,0.6)] ring-[2px] ring-yellow-400/50 rounded-full' : 'opacity-90'} ${gameState !== 'betting' ? 'opacity-30 cursor-not-allowed grayscale' : ''}`}
-            >
-              <HUDChip chipObj={chip} className="shadow-[0_4px_8px_rgba(0,0,0,0.8)]" />
-            </motion.div>
-          ))}
-          
-          <button className="text-white/20 hover:text-white/60 p-1 hidden sm:block"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m9 18 6-6-6-6"/></svg></button>
+          {/* Menu Popup avec toutes les valeurs */}
+          <AnimatePresence>
+            {isChipMenuOpen && gameState === 'betting' && (
+              <motion.div
+                initial={{ opacity: 0, y: 20, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 20, scale: 0.8 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                className="absolute bottom-full mb-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 bg-[#1a110c]/95 backdrop-blur-xl p-3 rounded-[32px] border border-[#3e2723] shadow-[0_-10px_30px_rgba(0,0,0,0.8)]"
+              >
+                {CHIPS.slice().reverse().map(chip => (
+                  <motion.div
+                    key={chip.value}
+                    whileHover={{ scale: 1.15 }}
+                    onClick={() => selectChip(chip.value)}
+                    className={`cursor-pointer transition-all ${selectedChipValue === chip.value ? 'ring-2 ring-yellow-400/50 rounded-full scale-110 drop-shadow-[0_0_10px_rgba(234,179,8,0.3)]' : 'opacity-80 hover:opacity-100'}`}
+                  >
+                    <HUDChip chipObj={chip} className="shadow-[0_4px_8px_rgba(0,0,0,0.8)] w-10 h-10 md:w-12 md:h-12" />
+                  </motion.div>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Jeton Actuel (Bouton principal d'ouverture) */}
+          <motion.div
+            whileHover={gameState === 'betting' ? { scale: 1.05 } : {}}
+            whileTap={gameState === 'betting' ? { scale: 0.95 } : {}}
+            onClick={() => {
+              if (gameState === 'betting') setIsChipMenuOpen(!isChipMenuOpen);
+            }}
+            className="cursor-pointer relative flex items-center justify-center p-2 md:p-3 bg-black/60 rounded-full shadow-[inset_0_2px_10px_rgba(0,0,0,0.9)] border border-white/5"
+          >
+            <HUDChip 
+                chipObj={CHIPS.find(c => c.value === selectedChipValue) || CHIPS[0]} 
+                className="shadow-[0_8px_15px_rgba(0,0,0,0.8)] ring-[2px] ring-yellow-400/50" 
+            />
+            {/* Petit indicateur chevron pour montrer que c'est interactif */}
+            <div className="absolute -top-1 -right-1 bg-[#3e2723] rounded-full p-0.5 border border-yellow-600/50 text-yellow-500 shadow-[0_2px_5px_rgba(0,0,0,0.5)]">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+            </div>
+          </motion.div>
         </div>
 
         {/* BOUTONS D'ACTION CENTRAUX */}
