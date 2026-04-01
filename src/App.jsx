@@ -17,7 +17,8 @@ const CHIPS = [
   { value: 5, bg: 'bg-green-600', border: 'border-green-800', text: 'text-green-100', inner: 'border-green-300/50' },
   { value: 25, bg: 'bg-orange-500', border: 'border-orange-700', text: 'text-orange-100', inner: 'border-orange-300/50' },
   { value: 100, bg: 'bg-gray-800', border: 'border-gray-900', text: 'text-white', inner: 'border-gray-400/50' },
-  { value: 500, bg: 'bg-purple-800', border: 'border-purple-950', text: 'text-white', inner: 'border-purple-400/50' }
+  { value: 500, bg: 'bg-purple-800', border: 'border-purple-950', text: 'text-white', inner: 'border-purple-400/50' },
+  { value: 1000, bg: 'bg-[#1a1a1a]', border: 'border-yellow-600', text: 'text-yellow-400', inner: 'border-yellow-600/50' }
 ];
 
 // --- GESTION AUDIO ---
@@ -74,7 +75,7 @@ const calculateHandValue = (cards) => {
 const getChipsForAmount = (amount) => {
   let remaining = amount;
   const newChips = [];
-  [500, 100, 25, 5].forEach(val => {
+  [1000, 500, 100, 25, 5].forEach(val => {
     while(remaining >= val) {
       newChips.push({ id: generateId(), value: val });
       remaining -= val;
@@ -95,7 +96,7 @@ const getSavedSession = () => {
 
 // --- COMPOSANTS VISUELS (Tailles Fixes pour le Plateau Virtuel) ---
 const BoardChip = ({ chipObj }) => (
-  <div className={`w-14 h-14 rounded-full border-[4px] shadow-[0_4px_6px_rgba(0,0,0,0.6)] flex items-center justify-center font-bold text-sm select-none ${chipObj.bg} ${chipObj.border} ${chipObj.text}`}>
+  <div className={`w-12 h-12 rounded-full border-[3px] shadow-[0_4px_6px_rgba(0,0,0,0.6)] flex items-center justify-center font-bold text-xs select-none ${chipObj.bg} ${chipObj.border} ${chipObj.text}`}>
     <div className={`w-[80%] h-[80%] rounded-full border-2 border-dashed flex items-center justify-center ${chipObj.inner}`}>
       {chipObj.value}
     </div>
@@ -586,13 +587,13 @@ export default function App() {
   const canDouble = activeHandObj && activeHandObj.cards.length === 2;
 
   // Coordonnées absolues pour s'aligner PARFAITEMENT sur l'arc de la table (Plateau 1200x800)
-  // AJUSTÉES : Plus écartées horizontalement et descendues verticalement
+  // AJUSTÉES : Plus écartées horizontalement et descendues verticalement SOUS la ligne
   const spotPositions = [
-    { left: '140px', top: '580px', rotate: '-24deg' },
-    { left: '360px', top: '520px', rotate: '-12deg' },
-    { left: '600px', top: '500px', rotate: '0deg' },
-    { left: '840px', top: '520px', rotate: '12deg' },
-    { left: '1060px', top: '580px', rotate: '24deg' }
+    { left: '160px', top: '630px', rotate: '-24deg' },
+    { left: '370px', top: '570px', rotate: '-12deg' },
+    { left: '600px', top: '550px', rotate: '0deg' },
+    { left: '830px', top: '570px', rotate: '12deg' },
+    { left: '1040px', top: '630px', rotate: '24deg' }
   ];
 
   return (
@@ -786,8 +787,8 @@ export default function App() {
                     })}
                   </div>
 
-                  {/* CERCLE DE MISE (Point d'ancrage central) */}
-                  <div className={`w-28 h-28 rounded-full border-[3px] transition-all duration-300 flex items-center justify-center relative ${spot.totalBet > 0 ? 'border-yellow-500/80 shadow-[0_0_10px_rgba(234,179,8,0.2)] bg-black/10' : 'border-white/10 hover:border-white/30'} ${isActiveSpot ? 'bg-white/10 ring-8 ring-yellow-500/20' : ''}`}>
+                  {/* CERCLE DE MISE (Point d'ancrage central - Rétreci à w-24 h-24) */}
+                  <div className={`w-24 h-24 rounded-full border-[3px] transition-all duration-300 flex items-center justify-center relative ${spot.totalBet > 0 ? 'border-yellow-500/80 shadow-[0_0_10px_rgba(234,179,8,0.2)] bg-black/10' : 'border-white/10 hover:border-white/30'} ${isActiveSpot ? 'bg-white/10 ring-8 ring-yellow-500/20' : ''}`}>
                     
                     <div className="absolute inset-1 rounded-full border border-dashed border-white/20 pointer-events-none"></div>
 
