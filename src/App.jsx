@@ -18,7 +18,9 @@ const CHIPS = [
   { value: 25, bg: 'bg-orange-500', border: 'border-orange-700', text: 'text-orange-100', inner: 'border-orange-300/50' },
   { value: 100, bg: 'bg-gray-800', border: 'border-gray-900', text: 'text-white', inner: 'border-gray-400/50' },
   { value: 500, bg: 'bg-purple-800', border: 'border-purple-950', text: 'text-white', inner: 'border-purple-400/50' },
-  { value: 1000, bg: 'bg-[#1a1a1a]', border: 'border-yellow-600', text: 'text-yellow-400', inner: 'border-yellow-600/50' }
+  { value: 1000, bg: 'bg-[#1a1a1a]', border: 'border-yellow-600', text: 'text-yellow-400', inner: 'border-yellow-600/50' },
+  { value: 5000, bg: 'bg-fuchsia-800', border: 'border-fuchsia-950', text: 'text-white', inner: 'border-fuchsia-400/50' },
+  { value: 10000, bg: 'bg-slate-100', border: 'border-slate-300', text: 'text-slate-900', inner: 'border-slate-400/50' }
 ];
 
 // --- GESTION AUDIO ---
@@ -75,7 +77,7 @@ const calculateHandValue = (cards) => {
 const getChipsForAmount = (amount) => {
   let remaining = amount;
   const newChips = [];
-  [1000, 500, 100, 25, 5].forEach(val => {
+  [10000, 5000, 1000, 500, 100, 25, 5].forEach(val => {
     while(remaining >= val) {
       newChips.push({ id: generateId(), value: val });
       remaining -= val;
